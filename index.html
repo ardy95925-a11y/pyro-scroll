@@ -2,483 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Essence Accumulator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Codex – PDF Reader</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Jetbrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-0: #0a0a0a;
+            --bg-1: #121212;
+            --bg-2: #1a1a1a;
+            --bg-3: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-tertiary: #808080;
+            --accent: #6366f1;
+            --accent-dark: #4f46e5;
+            --accent-light: #818cf8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.12);
         }
 
-        :root {
-            --bg-primary: #f7f5f1;
-            --bg-secondary: #fafaf8;
-            --surface: #ffffff;
-            --surface-alt: #fefdfb;
-            --border-primary: #e8e3d9;
-            --border-secondary: #ede8de;
-            --text-primary: #1a1814;
-            --text-secondary: #564f46;
-            --text-muted: #a09890;
-            --accent-gold: #d4af37;
-            --accent-dark: #9d8a3d;
-            --success: #6b9d6b;
-            --common: #8b8680;
-            --uncommon: #4a7a4a;
-            --rare: #1e3d7a;
-            --legendary: #c8960a;
-            --mythic: #8800ff;
-            --divine: #ffd700;
-            --ease-cubic: cubic-bezier(0.4, 0, 0.2, 1);
-            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
         }
 
         html, body {
-            height: 100%;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            color: var(--text-primary);
-            font-family: 'Lora', serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        @keyframes fade-up {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes glow-subtle {
-            0%, 100% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.25); }
-            50% { text-shadow: 0 0 40px rgba(212, 175, 55, 0.45); }
-        }
-
-        @keyframes pulse-gold {
-            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
-        }
-
-        /* ── MAIN CONTAINER ── */
-        .main-container {
-            width: 100%;
-            max-width: 1400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            animation: fade-up 0.8s var(--ease-smooth);
-        }
-
-        /* ── HEADER ── */
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header-eyebrow {
-            font-size: 11px;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-        }
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            font-size: 48px;
-            letter-spacing: 0.05em;
-            animation: glow-subtle 4s ease-in-out infinite;
-        }
-
-        /* ── TOP STATS ── */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-            border: 1px solid var(--border-primary);
-            border-radius: 6px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 9px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .stat-value {
-            font-family: 'Cinzel', serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-
-        /* ── MAIN CONTENT ── */
-        .content-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        /* ── SIDEBAR ── */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .action-card {
-            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-            border: 1px solid var(--border-primary);
-            border-radius: 6px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .big-button {
-            padding: 18px 24px;
-            border: 2px solid var(--accent-gold);
-            border-radius: 6px;
-            font-size: 12px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, #c9a830 100%);
-            color: white;
-            font-weight: 600;
-            transition: all 0.35s var(--ease-smooth);
-            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
-            width: 100%;
-        }
-
-        .big-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
-        }
-
-        .big-button:active {
-            transform: translateY(0);
-        }
-
-        .big-button.secondary {
-            background: var(--surface);
-            color: var(--text-primary);
-            border-color: var(--border-primary);
-        }
-
-        .big-button.secondary:hover {
-            background: var(--surface-alt);
-            border-color: var(--accent-gold);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        /* ── TABS ── */
-        .tab-system {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 8px 12px;
-            border: 1px solid var(--border-primary);
-            border-radius: 4px;
-            background: var(--surface);
-            color: var(--text-secondary);
-            font-size: 10px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s var(--ease-smooth);
-            font-weight: 500;
-        }
-
-        .tab-btn.active {
-            background: var(--accent-gold);
-            color: white;
-            border-color: var(--accent-gold);
-            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
-        }
-
-        .tab-btn:hover {
-            border-color: var(--accent-gold);
-        }
-
-        /* ── MAIN PANEL ── */
-        .main-panel {
-            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-            border: 1px solid var(--border-primary);
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            min-height: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .panel-title {
-            font-family: 'Cinzel', serif;
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        /* ── UPGRADES GRID ── */
-        .upgrades-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .upgrade-card {
-            padding: 14px;
-            border: 2px solid var(--border-primary);
-            border-radius: 5px;
-            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-            cursor: pointer;
-            transition: all 0.3s var(--ease-smooth);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            min-height: 140px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
-        }
-
-        .upgrade-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .upgrade-card.rarity-common { border-color: #a0a0a0; }
-        .upgrade-card.rarity-uncommon { border-color: var(--uncommon); }
-        .upgrade-card.rarity-rare { border-color: var(--rare); }
-        .upgrade-card.rarity-legendary { border-color: var(--legendary); box-shadow: 0 0 12px rgba(200, 150, 10, 0.2); }
-        .upgrade-card.rarity-mythic { border-color: var(--mythic); box-shadow: 0 0 12px rgba(136, 0, 255, 0.2); }
-        .upgrade-card.rarity-divine { border-color: var(--divine); box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
-
-        .upgrade-card:hover:not(.locked):not(.maxed) {
-            transform: translateY(-2px);
-            border-color: var(--accent-gold);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
-        }
-
-        .upgrade-card.maxed {
-            background: linear-gradient(135deg, #fcfbf9 0%, #fffbf6 100%);
-            border-color: var(--success);
-            box-shadow: 0 0 12px rgba(107, 157, 107, 0.15);
-        }
-
-        .upgrade-card.locked {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        .upgrade-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 6px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .upgrade-name {
-            font-family: 'Cinzel', serif;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
+            background: var(--bg-0);
             color: var(--text-primary);
         }
 
-        .upgrade-level {
-            font-size: 7px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            background: var(--accent-gold);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 2px;
-            white-space: nowrap;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
+        input, textarea {
+            user-select: text;
         }
 
-        .upgrade-effect {
-            font-size: 8px;
-            color: var(--text-secondary);
-            line-height: 1.3;
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .upgrade-cost {
-            font-size: 8px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding-top: 6px;
-            border-top: 1px solid var(--border-secondary);
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ── DASHBOARD ── */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .dashboard-item {
-            background: linear-gradient(135deg, #fafaf8 0%, #fcfbf9 100%);
-            border: 1px solid var(--border-primary);
-            border-radius: 5px;
-            padding: 12px;
-        }
-
-        .dashboard-label {
-            font-size: 8px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .dashboard-value {
-            font-family: 'Cinzel', serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--accent-gold);
-        }
-
-        /* ── PROGRESS BAR ── */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--border-primary);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-gold) 0%, #e8d67f 100%);
-            transition: width 0.3s var(--ease-smooth);
-        }
-
-        /* ── MODAL ── */
-        .modal {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-            border: 1px solid var(--border-primary);
-            border-radius: 8px;
-            padding: 32px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            animation: fade-up 0.4s var(--ease-spring);
-        }
-
-        .modal-title {
-            font-family: 'Cinzel', serif;
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-        }
-
-        .modal-section {
-            margin-bottom: 20px;
-        }
-
-        .modal-section-title {
-            font-family: 'Cinzel', serif;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            color: var(--accent-gold);
-            margin-bottom: 12px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-            font-size: 24px;
-            color: var(--text-muted);
-            transition: color 0.2s;
-        }
-
-        .close-modal:hover {
-            color: var(--text-primary);
-        }
-
-        /* ── SCROLLBAR ── */
+        /* SCROLLBAR */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -486,524 +55,1118 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.3);
-            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.5);
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        @media (max-width: 1024px) {
-            .content-wrapper {
-                grid-template-columns: 1fr;
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ===== UPLOAD SCREEN ===== */
+        .upload-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 3rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(99, 102, 241, 0.04), transparent 80%);
+            pointer-events: none;
+        }
+
+        .upload-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle 400px at 80% 20%, rgba(99, 102, 241, 0.02), transparent 70%);
+            pointer-events: none;
+        }
+
+        .upload-screen.hidden {
+            display: none;
+        }
+
+        .upload-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 500px;
+            animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            .sidebar {
-                flex-direction: row;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            .upgrades-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+
+        .upload-logo {
+            font-family: 'Jetbrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+        }
+
+        .upload-subtitle {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-label {
+            cursor: pointer;
+            width: 100%;
+            position: relative;
+            animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+        }
+
+        .upload-box {
+            padding: 4rem 2rem;
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(99, 102, 241, 0.01) 100%);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(129, 140, 248, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .upload-label:hover .upload-box {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(99, 102, 241, 0.02) 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-label:hover .upload-box::before {
+            opacity: 1;
+        }
+
+        .upload-icon {
+            width: 56px;
+            height: 56px;
+            color: var(--accent);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-label:hover .upload-icon {
+            transform: scale(1.2) translateY(-6px);
+            color: var(--accent-light);
+        }
+
+        .upload-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke-width: 1.5;
+        }
+
+        .upload-text h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-text p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-hint {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+        }
+
+        /* ===== READER SCREEN ===== */
+        .reader-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .reader-screen.hidden {
+            display: none;
+        }
+
+        /* CONTROLS AUTO-HIDE */
+        .reader-screen.fullscreen {
+            --ui-opacity: 0;
+        }
+
+        .reader-screen:hover {
+            --ui-opacity: 1;
+        }
+
+        .reader-screen.fullscreen .header,
+        .reader-screen.fullscreen .footer {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.7);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            height: 64px;
+            opacity: 1;
+            transition: opacity 0.3s ease 0.5s;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .book-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .book-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+
+        .title-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .title-info h2 {
+            font-family: 'Jetbrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: 0.01em;
+            line-height: 1.2;
+        }
+
+        .title-info p {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            position: relative;
+            font-size: 1rem;
+            height: 40px;
+            width: 40px;
+            opacity: 0.7;
+        }
+
+        .btn:hover {
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.15);
+            opacity: 1;
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ===== READER CONTENT ===== */
+        .reader-content {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            background: var(--bg-0);
+        }
+
+        #pdfCanvas {
+            max-width: 100%;
+            max-height: 100%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            border-radius: 0.75rem;
+            image-rendering: crisp-edges;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+            animation: pageEntry 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #pdfCanvas.inverted {
+            filter: invert(0.92) hue-rotate(180deg);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.7);
+            padding: 0.75rem 1.5rem;
+            height: 60px;
+            opacity: 1;
+            transition: opacity 0.3s ease 0.5s;
+        }
+
+        .footer-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .page-nav {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            height: 40px;
+            width: 40px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.15);
+            opacity: 1;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        #pageSlider {
+            flex: 1;
+            height: 3px;
+            cursor: pointer;
+            border-radius: 2px;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            min-width: 80px;
+            margin: 0 1rem;
+        }
+
+        #pageSlider::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        #pageSlider::-webkit-slider-thumb:hover {
+            transform: scale(1.4);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        #pageSlider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .page-info {
+            font-family: 'Jetbrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            min-width: 50px;
+            text-align: right;
+            opacity: 0.7;
+        }
+
+        /* ===== BOTTOM CENTER CONTROLS (MINIMAL) ===== */
+        .bottom-controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .reader-screen:hover .bottom-controls {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .reader-screen.fullscreen .bottom-controls {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .zoom-badge {
+            font-family: 'Jetbrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 40px;
+            text-align: center;
+            padding: 0 0.25rem;
+        }
+
+        .separator {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== FLOATING PROGRESS ===== */
+        .progress-ring {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 48px;
+            height: 48px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 400;
+        }
+
+        .reader-screen:hover .progress-ring {
+            opacity: 1;
+        }
+
+        .progress-ring-circle {
+            stroke: rgba(255, 255, 255, 0.1);
+            transition: stroke 0.3s ease;
+        }
+
+        .progress-ring-circle-fill {
+            stroke: var(--accent);
+            transition: stroke-dashoffset 0.3s ease;
+            stroke-dasharray: 301.59;
+            stroke-dashoffset: 301.59;
+        }
+
+        .progress-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Jetbrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-1);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-family: 'Jetbrains Mono', monospace;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.6rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .modal-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-light);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 100;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            z-index: 950;
+            animation: slideInUp 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.75rem 1rem;
+                height: 56px;
+            }
+
+            .footer {
+                height: 56px;
+            }
+
+            .reader-content {
+                padding: 1rem;
+            }
+
+            .bottom-controls {
+                bottom: 1rem;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .nav-btn {
+                width: 36px;
+                height: 36px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <header>
-            <div class="header-eyebrow">Essence Accumulator v2.0</div>
-            <h1>Convergence Ascendant</h1>
-        </header>
+    <div class="container">
+        <!-- UPLOAD SCREEN -->
+        <div class="upload-screen">
+            <div class="upload-content">
+                <div class="upload-logo">codex</div>
+                <p class="upload-subtitle">Premium PDF Reader</p>
 
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-label">Current Essence</div>
-                <div class="stat-value" id="mainPoints">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Per Click</div>
-                <div class="stat-value" id="statClick">1.0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Per Second</div>
-                <div class="stat-value" id="statAuto">0.0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Total Earned</div>
-                <div class="stat-value" id="statTotal">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Prestige Multiplier</div>
-                <div class="stat-value" id="statPrestige">1.0x</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Active Synergies</div>
-                <div class="stat-value" id="statSynergies">0</div>
+                <label class="upload-label">
+                    <input type="file" id="fileInput" accept=".pdf">
+                    <div class="upload-box">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 2v20M2 12h20" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="upload-text">
+                            <h2>Upload PDF</h2>
+                            <p>Drag or click to select</p>
+                        </div>
+                    </div>
+                </label>
+
+                <p class="upload-hint">Supports all standard PDF formats</p>
             </div>
         </div>
 
-        <div class="content-wrapper">
-            <div class="sidebar">
-                <div class="action-card">
-                    <button class="big-button" id="clickBtn">Generate Essence</button>
+        <!-- READER SCREEN -->
+        <div class="reader-screen hidden">
+            <div class="header">
+                <div class="header-left">
+                    <div class="book-info">
+                        <span class="book-icon">📖</span>
+                        <div class="title-info">
+                            <h2 id="fileName">Document.pdf</h2>
+                            <p id="pageCounter">1 / 100</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="action-card">
-                    <div style="font-size: 12px; font-family: Cinzel; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 8px;">Navigation</div>
-                    <div class="tab-system" id="mainTabs"></div>
-                </div>
-
-                <div class="action-card">
-                    <button class="big-button secondary" id="statsBtn">Statistics</button>
-                    <button class="big-button secondary" id="prestigeBtn">Prestige Mode</button>
-                    <button class="big-button secondary" id="achieveBtn">Achievements</button>
+                <div class="header-controls">
+                    <button class="btn" id="jumpBtn" title="Go to page">⤴</button>
+                    <button class="btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+                    <button class="btn" id="closeBtn" title="Close">✕</button>
                 </div>
             </div>
 
-            <div class="main-panel">
-                <div class="panel-title" id="panelTitle">Strike Force</div>
-                <div class="upgrades-grid" id="upgradesGrid"></div>
+            <div class="reader-content">
+                <canvas id="pdfCanvas"></canvas>
+            </div>
+
+            <div class="footer">
+                <div class="footer-controls">
+                    <button class="nav-btn" id="prevBtn">‹</button>
+                    <input type="range" id="pageSlider" min="1" max="1" value="1">
+                    <button class="nav-btn" id="nextBtn">›</button>
+                    <div class="page-info" id="pageInfo">1 / 1</div>
+                </div>
+            </div>
+
+            <div class="bottom-controls">
+                <button class="btn" id="zoomOut" title="Zoom Out">−</button>
+                <span class="zoom-badge" id="zoomDisplay">100%</span>
+                <button class="btn" id="zoomIn" title="Zoom In">+</button>
+                <div class="separator"></div>
+                <button class="btn" id="settingsBtn" title="Settings">⚙</button>
+            </div>
+
+            <svg class="progress-ring" viewBox="0 0 48 48">
+                <circle class="progress-ring-circle" cx="24" cy="24" r="20" fill="none" stroke-width="2"/>
+                <circle class="progress-ring-circle-fill" cx="24" cy="24" r="20" fill="none" stroke-width="2"/>
+                <text class="progress-text" x="50%" y="50%">0%</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="jumpModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Jump to Page</h2>
+            <div class="input-group">
+                <label>Enter page number</label>
+                <input type="number" id="jumpInput" min="1" placeholder="Page">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="closeModal('jumpModal')">Cancel</button>
+                <button class="modal-btn primary" id="jumpConfirm">Go</button>
             </div>
         </div>
     </div>
 
-    <!-- Statistics Modal -->
-    <div class="modal" id="statsModal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('statsModal')">×</div>
-            <div class="modal-title">Statistics</div>
-            <div id="statsContent"></div>
-        </div>
-    </div>
-
-    <!-- Prestige Modal -->
-    <div class="modal" id="prestigeModal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('prestigeModal')">×</div>
-            <div class="modal-title">Prestige</div>
-            <div id="prestigeContent"></div>
-        </div>
-    </div>
-
-    <!-- Achievements Modal -->
-    <div class="modal" id="achieveModal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('achieveModal')">×</div>
-            <div class="modal-title">Achievements</div>
-            <div id="achieveContent"></div>
-        </div>
-    </div>
+    <div class="loading hidden" id="loading"></div>
 
     <script>
-        class GameV2 {
-            constructor() {
-                this.points = 0;
-                this.totalEarned = 0;
-                this.clickValue = 1;
-                this.autoClickRate = 0;
-                this.prestige = 0;
-                this.prestigeMultiplier = 1;
-                this.purchasedUpgrades = {};
-                this.synergies = new Map();
-                this.achievements = new Set();
-                this.currentTab = 'tier1';
-                this.autoInterval = null;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-                this.initUpgrades();
-                this.setupEventListeners();
-                this.render();
-                this.startAutoClick();
-                this.loadProgress();
+        // STATE
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+        let zoom = 100;
+
+        // ELEMENTS
+        const fileInput = document.getElementById('fileInput');
+        const uploadScreen = document.querySelector('.upload-screen');
+        const readerScreen = document.querySelector('.reader-screen');
+        const canvas = document.getElementById('pdfCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        const fileName = document.getElementById('fileName');
+        const pageCounter = document.getElementById('pageCounter');
+        const pageInfo = document.getElementById('pageInfo');
+        const pageSlider = document.getElementById('pageSlider');
+        const progressText = document.querySelector('.progress-text');
+        const progressFill = document.querySelector('.progress-ring-circle-fill');
+
+        const zoomIn = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+        const zoomDisplay = document.getElementById('zoomDisplay');
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const jumpBtn = document.getElementById('jumpBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const loading = document.getElementById('loading');
+
+        const jumpModal = document.getElementById('jumpModal');
+        const jumpInput = document.getElementById('jumpInput');
+        const jumpConfirm = document.getElementById('jumpConfirm');
+
+        let renderTimeout;
+
+        // FILE UPLOAD
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            showLoading();
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+                totalPages = pdfDoc.numPages;
+                currentPage = 1;
+                zoom = 100;
+
+                fileName.textContent = file.name;
+                pageSlider.max = totalPages;
+                pageSlider.value = 1;
+
+                uploadScreen.classList.add('hidden');
+                readerScreen.classList.remove('hidden');
+
+                await renderPage(1);
+                updateUI();
+            } catch (err) {
+                console.error('Error loading PDF:', err);
+                showToast('Error loading PDF', 'error');
+                hideLoading();
             }
+        });
 
-            initUpgrades() {
-                this.upgrades = [];
-                const tiers = [
-                    { id: 'tier1', name: 'Strike Force', rarity: 'common', upgrades: this.generateStrikeForce() },
-                    { id: 'tier2', name: 'Harmony', rarity: 'uncommon', upgrades: this.generateHarmony() },
-                    { id: 'tier3', name: 'Amplification', rarity: 'rare', upgrades: this.generateAmplification() },
-                    { id: 'tier4', name: 'Transcendence', rarity: 'legendary', upgrades: this.generateTranscendence() },
-                    { id: 'tier5', name: 'Divinity', rarity: 'divine', upgrades: this.generateDivinity() },
-                ];
+        // DRAG AND DROP
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
 
-                tiers.forEach(tier => {
-                    tier.upgrades.forEach(u => {
-                        u.tier = tier.id;
-                        u.tierName = tier.name;
-                        u.rarity = tier.rarity;
-                        this.upgrades.push(u);
-                        this.purchasedUpgrades[u.id] = 0;
-                    });
-                });
-
-                this.tabs = tiers;
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file?.type === 'application/pdf') {
+                fileInput.files = e.dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
             }
+        });
 
-            generateStrikeForce() {
-                const upgrades = [];
-                const names = ['Sharp Edge', 'Precision Strike', 'Blade Mastery', 'Keen Edge', 'Cutting Force',
-                    'Slash Technique', 'Rending Blow', 'Cleave', 'Whirlwind Strike', 'Execution',
-                    'Power Strike', 'Meteor Impact', 'Tidal Slash', 'Inferno Blade', 'Frost Edge',
-                    'Thunder Strike', 'Eclipse Slash', 'Void Cleave', 'Cosmic Slash', 'Divine Blade'];
+        // RENDER PAGE
+        async function renderPage(pageNum) {
+            if (!pdfDoc) return;
 
-                for (let i = 0; i < 20; i++) {
-                    upgrades.push({
-                        id: `strike_${i}`,
-                        name: names[i],
-                        cost: 50 + (i * 40),
-                        maxLevel: 5,
-                        effect: `+${0.4 + i * 0.15}/lvl Click`,
-                        action: () => { this.clickValue += 0.4 + i * 0.15; },
-                        synergy: i % 3 === 0 ? 'click_boost' : null
-                    });
-                }
-                return upgrades;
-            }
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: zoom / 100 });
 
-            generateHarmony() {
-                const upgrades = [];
-                const names = ['Idle Pulse', 'Harmonic Flow', 'Passive Essence', 'Quiet Resonance', 'Still Waters',
-                    'Meditation', 'Serenity', 'Inner Peace', 'Balance', 'Equilibrium',
-                    'Eternal Current', 'Celestial Flow', 'Cosmic Resonance', 'Universal Harmony', 'Sacred Pulse',
-                    'Divine Flow', 'Eternal Essence', 'Infinite Current', 'Sublime Harmony', 'Perfect Balance'];
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
 
-                for (let i = 0; i < 20; i++) {
-                    upgrades.push({
-                        id: `harmony_${i}`,
-                        name: names[i],
-                        cost: 100 + (i * 60),
-                        maxLevel: 5,
-                        effect: `+${0.2 + i * 0.12}/lvl Per-Sec`,
-                        action: () => { this.autoClickRate += 0.2 + i * 0.12; },
-                        synergy: i % 3 === 0 ? 'passive_boost' : null
-                    });
-                }
-                return upgrades;
-            }
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
 
-            generateAmplification() {
-                const upgrades = [];
-                const names = ['Amplify', 'Resonate', 'Magnify', 'Enhance', 'Boost',
-                    'Empower', 'Supercharge', 'Intensify', 'Escalate', 'Accelerate',
-                    'Catalyst', 'Synergize', 'Harmonize', 'Culminate', 'Transcend',
-                    'Ascend', 'Elevate', 'Apotheosis', 'Zenith', 'Apex'];
-
-                for (let i = 0; i < 20; i++) {
-                    upgrades.push({
-                        id: `amp_${i}`,
-                        name: names[i],
-                        cost: 300 + (i * 100),
-                        maxLevel: 3,
-                        effect: `+${5 + i * 3}% All Gains`,
-                        action: () => { 
-                            const mult = 1 + (0.05 + i * 0.03);
-                            this.clickValue *= mult;
-                            this.autoClickRate *= mult;
-                        },
-                        synergy: i % 2 === 0 ? 'multi_boost' : null
-                    });
-                }
-                return upgrades;
-            }
-
-            generateTranscendence() {
-                const upgrades = [];
-                const names = ['Ascension Path', 'Ethereal Bond', 'Mystic Gate', 'Arcane Nexus', 'Spell Weave',
-                    'Rune Master', 'Tome Study', 'Forbidden Knowledge', 'Ancient Wisdom', 'Occult Power',
-                    'Eldritch Truth', 'Cosmic Understanding', 'Universal Law', 'Reality Bend', 'Dimensional Tear',
-                    'Void Walker', 'Time Bender', 'Fate Weaver', 'Destiny Master', 'Omniscient Eye'];
-
-                for (let i = 0; i < 20; i++) {
-                    upgrades.push({
-                        id: `transcend_${i}`,
-                        name: names[i],
-                        cost: 1000 + (i * 300),
-                        maxLevel: 2,
-                        effect: `Special: +${10 + i * 5}% Bonus`,
-                        action: () => { 
-                            this.prestigeMultiplier *= 1 + (0.1 + i * 0.05);
-                        },
-                        synergy: 'prestige_boost'
-                    });
-                }
-                return upgrades;
-            }
-
-            generateDivinity() {
-                const upgrades = [];
-                const names = ['Divine Blessing', 'Celestial Grace', 'Godly Power', 'Supreme Being', 'Omnipotence',
-                    'Cosmic Force', 'Universal Truth', 'Eternal Glory', 'Infinite Power', 'Absolute Authority',
-                    'Creation Force', 'Annihilation Power', 'Existence Itself', 'Beyond Comprehension', 'Ultimate Reality',
-                    'Transcendent Being', 'Boundless Essence', 'Infinite Potential', 'Eternal Flame', 'Final Form'];
-
-                for (let i = 0; i < 20; i++) {
-                    upgrades.push({
-                        id: `divine_${i}`,
-                        name: names[i],
-                        cost: 5000 + (i * 1000),
-                        maxLevel: 1,
-                        effect: `Endgame: +${20 + i * 10}% All`,
-                        action: () => { 
-                            this.clickValue *= 1.2 + i * 0.1;
-                            this.autoClickRate *= 1.2 + i * 0.1;
-                        },
-                        synergy: 'divine_grace'
-                    });
-                }
-                return upgrades;
-            }
-
-            setupEventListeners() {
-                document.getElementById('clickBtn').addEventListener('click', () => this.click());
-                document.getElementById('statsBtn').addEventListener('click', () => this.showStats());
-                document.getElementById('prestigeBtn').addEventListener('click', () => this.showPrestige());
-                document.getElementById('achieveBtn').addEventListener('click', () => this.showAchievements());
-            }
-
-            click() {
-                this.points += this.clickValue * this.prestigeMultiplier;
-                this.totalEarned += this.clickValue * this.prestigeMultiplier;
-                this.render();
-                this.checkAchievements();
-            }
-
-            canBuyUpgrade(upgrade) {
-                if (this.purchasedUpgrades[upgrade.id] >= upgrade.maxLevel) return false;
-                if (this.points < upgrade.cost) return false;
-                return true;
-            }
-
-            buyUpgrade(upgradeId) {
-                const upgrade = this.upgrades.find(u => u.id === upgradeId);
-                if (!upgrade || !this.canBuyUpgrade(upgrade)) return;
-
-                this.points -= upgrade.cost;
-                this.purchasedUpgrades[upgradeId]++;
-                upgrade.action();
-
-                if (upgrade.synergy) {
-                    this.synergies.set(upgradeId, upgrade.synergy);
-                }
-
-                this.render();
-                this.renderUpgrades();
-                this.checkAchievements();
-            }
-
-            startAutoClick() {
-                if (this.autoInterval) clearInterval(this.autoInterval);
-                if (this.autoClickRate > 0) {
-                    this.autoInterval = setInterval(() => {
-                        this.points += (this.autoClickRate * this.prestigeMultiplier);
-                        this.totalEarned += (this.autoClickRate * this.prestigeMultiplier);
-                        this.render();
-                    }, 1000);
-                }
-            }
-
-            doPrestige() {
-                const prestigeAmount = Math.floor(Math.sqrt(this.totalEarned / 1000));
-                if (prestigeAmount <= this.prestige) return;
-
-                this.prestige = prestigeAmount;
-                this.prestigeMultiplier = 1 + (this.prestige * 0.1);
-                this.points = 0;
-                this.clickValue = 1;
-                this.autoClickRate = 0;
-                this.purchasedUpgrades = {};
-                this.synergies.clear();
-
-                this.upgrades.forEach(u => {
-                    this.purchasedUpgrades[u.id] = 0;
-                });
-
-                this.render();
-                this.renderUpgrades();
-            }
-
-            checkAchievements() {
-                if (this.totalEarned >= 1000 && !this.achievements.has('earn_1k')) {
-                    this.achievements.add('earn_1k');
-                }
-                if (this.totalEarned >= 1000000 && !this.achievements.has('earn_1m')) {
-                    this.achievements.add('earn_1m');
-                }
-                if (Object.values(this.purchasedUpgrades).filter(v => v > 0).length >= 20 && !this.achievements.has('buy_20')) {
-                    this.achievements.add('buy_20');
-                }
-                if (this.prestige >= 5 && !this.achievements.has('prestige_5')) {
-                    this.achievements.add('prestige_5');
-                }
-            }
-
-            showStats() {
-                const modal = document.getElementById('statsModal');
-                const content = document.getElementById('statsContent');
-                const boughtCount = Object.values(this.purchasedUpgrades).filter(v => v > 0).length;
-                const totalBought = Object.values(this.purchasedUpgrades).reduce((a, b) => a + b, 0);
-
-                content.innerHTML = `
-                    <div class="modal-section">
-                        <div class="modal-section-title">Progression</div>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Current Points</div>
-                                <div class="dashboard-value">${Math.floor(this.points).toLocaleString()}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Total Earned</div>
-                                <div class="dashboard-value">${Math.floor(this.totalEarned).toLocaleString()}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Click Value</div>
-                                <div class="dashboard-value">${this.clickValue.toFixed(2)}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Auto Value</div>
-                                <div class="dashboard-value">${this.autoClickRate.toFixed(2)}/s</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-section">
-                        <div class="modal-section-title">Upgrades</div>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Unique Upgrades</div>
-                                <div class="dashboard-value">${boughtCount}/100</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Total Levels</div>
-                                <div class="dashboard-value">${totalBought}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Active Synergies</div>
-                                <div class="dashboard-value">${this.synergies.size}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Prestige Level</div>
-                                <div class="dashboard-value">${this.prestige}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                modal.classList.add('active');
-            }
-
-            showPrestige() {
-                const modal = document.getElementById('prestigeModal');
-                const content = document.getElementById('prestigeContent');
-                const prestigeGain = Math.floor(Math.sqrt(this.totalEarned / 1000)) - this.prestige;
-
-                content.innerHTML = `
-                    <div class="modal-section">
-                        <div class="modal-section-title">Prestige System</div>
-                        <p style="margin-bottom: 12px; font-size: 12px;">Reset your progress to gain permanent multipliers.</p>
-                    </div>
-                    <div class="modal-section">
-                        <div class="dashboard-grid">
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Current Prestige</div>
-                                <div class="dashboard-value">${this.prestige}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Prestige Gain</div>
-                                <div class="dashboard-value">${prestigeGain}</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Current Multiplier</div>
-                                <div class="dashboard-value">${this.prestigeMultiplier.toFixed(2)}x</div>
-                            </div>
-                            <div class="dashboard-item">
-                                <div class="dashboard-label">Next Multiplier</div>
-                                <div class="dashboard-value">${(1 + (this.prestige + prestigeGain) * 0.1).toFixed(2)}x</div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="big-button" onclick="game.doPrestige(); closeModal('prestigeModal');" style="margin-top: 20px;">Prestige Now</button>
-                `;
-                modal.classList.add('active');
-            }
-
-            showAchievements() {
-                const modal = document.getElementById('achieveModal');
-                const content = document.getElementById('achieveContent');
-                const allAchievements = [
-                    { id: 'earn_1k', name: 'First Thousand', desc: 'Earn 1,000 essence' },
-                    { id: 'earn_1m', name: 'Million Milestone', desc: 'Earn 1,000,000 essence' },
-                    { id: 'buy_20', name: 'Collector', desc: 'Buy 20 unique upgrades' },
-                    { id: 'prestige_5', name: 'Elitist', desc: 'Reach prestige level 5' },
-                ];
-
-                content.innerHTML = allAchievements.map(a => `
-                    <div style="padding: 12px; margin-bottom: 8px; border: 1px solid ${this.achievements.has(a.id) ? 'var(--accent-gold)' : 'var(--border-primary)'}; border-radius: 4px; background: ${this.achievements.has(a.id) ? 'rgba(212, 175, 55, 0.1)' : 'var(--surface)'};">
-                        <div style="font-weight: 600; color: ${this.achievements.has(a.id) ? 'var(--accent-gold)' : 'var(--text-primary)'};">${a.name} ${this.achievements.has(a.id) ? '✓' : ''}</div>
-                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">${a.desc}</div>
-                    </div>
-                `).join('');
-                modal.classList.add('active');
-            }
-
-            switchTab(tabId) {
-                this.currentTab = tabId;
-                this.renderUpgrades();
-            }
-
-            renderUpgrades() {
-                const tab = this.tabs.find(t => t.id === this.currentTab);
-                document.getElementById('panelTitle').textContent = tab.name;
-
-                const tabsHtml = this.tabs.map(t => `
-                    <button class="tab-btn ${t.id === this.currentTab ? 'active' : ''}" onclick="game.switchTab('${t.id}')">${t.name}</button>
-                `).join('');
-                document.getElementById('mainTabs').innerHTML = tabsHtml;
-
-                const upgradesHtml = tab.upgrades.map(u => {
-                    const level = this.purchasedUpgrades[u.id];
-                    const canBuy = this.canBuyUpgrade(u);
-                    const isFull = level >= u.maxLevel;
-                    const isDisabled = !canBuy && !isFull;
-
-                    return `
-                        <div class="upgrade-card rarity-${u.rarity} ${isFull ? 'maxed' : ''} ${isDisabled ? 'locked' : ''}" onclick="game.buyUpgrade('${u.id}')">
-                            <div class="upgrade-header">
-                                <div class="upgrade-name">${u.name}</div>
-                                <div class="upgrade-level">${level}/${u.maxLevel}</div>
-                            </div>
-                            <div class="upgrade-effect">${u.effect}</div>
-                            <div class="upgrade-cost">${isFull ? '★ Max ★' : canBuy ? u.cost + ' pts' : '—'}</div>
-                        </div>
-                    `;
-                }).join('');
-                document.getElementById('upgradesGrid').innerHTML = upgradesHtml;
-            }
-
-            render() {
-                document.getElementById('mainPoints').textContent = Math.floor(this.points).toLocaleString();
-                document.getElementById('statClick').textContent = (this.clickValue * this.prestigeMultiplier).toFixed(2);
-                document.getElementById('statAuto').textContent = (this.autoClickRate * this.prestigeMultiplier).toFixed(2);
-                document.getElementById('statTotal').textContent = Math.floor(this.totalEarned).toLocaleString();
-                document.getElementById('statPrestige').textContent = this.prestigeMultiplier.toFixed(2) + 'x';
-                document.getElementById('statSynergies').textContent = this.synergies.size;
-            }
-
-            loadProgress() {
-                // Placeholder for save system
+                await page.render(renderContext).promise;
+                hideLoading();
+            } catch (err) {
+                console.error('Error rendering:', err);
             }
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+        // NAVIGATION
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                pageSlider.value = currentPage;
+                renderAndUpdate();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                pageSlider.value = currentPage;
+                renderAndUpdate();
+            }
+        });
+
+        pageSlider.addEventListener('input', (e) => {
+            currentPage = parseInt(e.target.value);
+            clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(renderAndUpdate, 100);
+        });
+
+        // ZOOM
+        zoomIn.addEventListener('click', () => {
+            zoom = Math.min(300, zoom + 10);
+            zoomDisplay.textContent = zoom + '%';
+            renderAndUpdate();
+        });
+
+        zoomOut.addEventListener('click', () => {
+            zoom = Math.max(50, zoom - 10);
+            zoomDisplay.textContent = zoom + '%';
+            renderAndUpdate();
+        });
+
+        // JUMP TO PAGE
+        jumpBtn.addEventListener('click', () => {
+            jumpInput.value = currentPage;
+            jumpInput.max = totalPages;
+            openModal('jumpModal');
+            jumpInput.focus();
+            jumpInput.select();
+        });
+
+        jumpConfirm.addEventListener('click', () => {
+            const page = parseInt(jumpInput.value);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                pageSlider.value = currentPage;
+                renderAndUpdate();
+                closeModal('jumpModal');
+            }
+        });
+
+        jumpInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') jumpConfirm.click();
+        });
+
+        // FULLSCREEN
+        fullscreenBtn.addEventListener('click', () => {
+            readerScreen.classList.toggle('fullscreen');
+            fullscreenBtn.classList.toggle('active');
+        });
+
+        // CLOSE
+        closeBtn.addEventListener('click', () => {
+            uploadScreen.classList.remove('hidden');
+            readerScreen.classList.remove('hidden', 'fullscreen');
+            pdfDoc = null;
+            fileInput.value = '';
+        });
+
+        // UI UPDATES
+        function updateUI() {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            pageCounter.textContent = `${currentPage} / ${totalPages}`;
+            pageInfo.textContent = `${currentPage} / ${totalPages}`;
+
+            const progress = (currentPage / totalPages) * 100;
+            progressText.textContent = Math.round(progress) + '%';
+            const circumference = 301.59;
+            progressFill.style.strokeDashoffset = circumference - (progress / 100 * circumference);
         }
 
-        let game;
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                game = new GameV2();
-                game.renderUpgrades();
-            });
-        } else {
-            game = new GameV2();
-            game.renderUpgrades();
+        function renderAndUpdate() {
+            showLoading();
+            renderPage(currentPage);
+            updateUI();
         }
+
+        // HELPERS
+        function showLoading() {
+            loading.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loading.classList.add('hidden');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideInUp 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // KEYBOARD SHORTCUTS
+        document.addEventListener('keydown', (e) => {
+            if (!pdfDoc || document.activeElement.tagName === 'INPUT') return;
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    nextBtn.click();
+                    e.preventDefault();
+                    break;
+                case 'ArrowLeft':
+                    prevBtn.click();
+                    e.preventDefault();
+                    break;
+                case '+':
+                case '=':
+                    zoomIn.click();
+                    e.preventDefault();
+                    break;
+                case '-':
+                    zoomOut.click();
+                    e.preventDefault();
+                    break;
+                case 'g':
+                    jumpBtn.click();
+                    e.preventDefault();
+                    break;
+                case 'f':
+                    fullscreenBtn.click();
+                    e.preventDefault();
+                    break;
+                case 'Escape':
+                    if (jumpModal.classList.contains('active')) {
+                        closeModal('jumpModal');
+                    } else if (readerScreen.classList.contains('fullscreen')) {
+                        fullscreenBtn.click();
+                    }
+                    break;
+            }
+        });
+
+        // HIDE UI ON INACTIVITY
+        let uiTimeout;
+        readerScreen.addEventListener('mousemove', () => {
+            clearTimeout(uiTimeout);
+        });
+
+        readerScreen.addEventListener('mouseleave', () => {
+            uiTimeout = setTimeout(() => {
+                if (readerScreen.classList.contains('fullscreen')) {
+                    // Auto-hide already handled by CSS
+                }
+            }, 3000);
+        });
     </script>
 </body>
 </html>
