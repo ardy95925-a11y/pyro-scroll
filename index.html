@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Ascend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --tertiary-dark: #2a2a2a;
+            --accent-grey: #3a3a3a;
+            --light-grey: #5a5a5a;
+            --highlight: #d4af37;
+            --accent-blue: #4a7c8f;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            font-family: 'Space Mono', monospace;
+            color: #e0e0e0;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1024px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-family: 'Crimson Text', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--highlight);
+            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--light-grey);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .points-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .points-label {
+            font-size: 0.85rem;
+            color: var(--light-grey);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .points-value {
+            font-family: 'Crimson Text', serif;
+            font-size: 2.5rem;
+            color: var(--highlight);
+            text-shadow: 0 2px 15px rgba(212, 175, 55, 0.3);
+            font-weight: 600;
+        }
+
+        .click-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .click-button {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, var(--tertiary-dark), var(--accent-grey));
+            border: 2px solid var(--highlight);
+            color: var(--highlight);
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-family: 'Crimson Text', serif;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .click-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .click-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .click-button.pulse::before {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        .floating-points {
+            position: fixed;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.5rem;
+            color: var(--highlight);
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid var(--accent-grey);
+            background: var(--secondary-dark);
+            color: var(--light-grey);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            border-color: var(--highlight);
+            color: var(--highlight);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .skill-tree-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+
+        .skill-tree-modal.active {
+            display: flex;
+        }
+
+        .book-container {
+            perspective: 1200px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+        }
+
+        .book {
+            background: var(--secondary-dark);
+            border: 1px solid var(--tertiary-dark);
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+                        -20px 0 40px rgba(212, 175, 55, 0.1);
+            transform-style: preserve-3d;
+            animation: bookOpen 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes bookOpen {
+            0% {
+                opacity: 0;
+                transform: rotateY(-90deg) translateZ(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateY(0) translateZ(0);
+            }
+        }
+
+        .book-close {
+            animation: bookClose 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes bookClose {
+            0% {
+                opacity: 1;
+                transform: rotateY(0) translateZ(0);
+            }
+            100% {
+                opacity: 0;
+                transform: rotateY(90deg) translateZ(-100px);
+            }
+        }
+
+        .skill-tree-header {
+            padding: 30px;
+            border-bottom: 1px solid var(--tertiary-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-tree-title {
+            font-family: 'Crimson Text', serif;
+            font-size: 2rem;
+            color: var(--highlight);
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--light-grey);
+            background: transparent;
+            color: var(--light-grey);
+            cursor: pointer;
+            font-size: 1.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            border-color: var(--highlight);
+            color: var(--highlight);
+        }
+
+        .skill-tree-content {
+            padding: 30px;
+            max-height: calc(90vh - 120px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-grey) transparent;
+        }
+
+        .skill-tree-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .skill-tree-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .skill-tree-content::-webkit-scrollbar-thumb {
+            background: var(--accent-grey);
+            border-radius: 3px;
+        }
+
+        .skill-category {
+            margin-bottom: 40px;
+        }
+
+        .category-name {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--accent-grey);
+        }
+
+        .skill {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+            padding: 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .skill:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 2px solid var(--highlight);
+            padding-left: 13px;
+        }
+
+        .skill-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--tertiary-dark);
+            border: 1px solid var(--accent-grey);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .skill.locked .skill-icon {
+            opacity: 0.5;
+        }
+
+        .skill-info {
+            flex: 1;
+        }
+
+        .skill-name {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .skill.locked .skill-name {
+            color: var(--light-grey);
+        }
+
+        .skill-desc {
+            font-size: 0.8rem;
+            color: var(--light-grey);
+        }
+
+        .skill-cost {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            color: var(--highlight);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .skill.locked .skill-cost {
+            color: var(--accent-grey);
+        }
+
+        .skill-button {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid var(--accent-grey);
+            color: var(--light-grey);
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .skill.unlocked .skill-button {
+            border-color: var(--highlight);
+            color: var(--highlight);
+            cursor: pointer;
+        }
+
+        .skill.unlocked .skill-button:hover {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .skill.locked .skill-button {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .skill.maxed .skill-button {
+            border-color: var(--accent-grey);
+            color: var(--accent-grey);
+            cursor: default;
+        }
+
+        .maxed-badge {
+            color: var(--accent-blue);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .click-button {
+                width: 150px;
+                height: 150px;
+                font-size: 2rem;
+            }
+
+            .skill-tree-header {
+                padding: 20px;
+            }
+
+            .skill-tree-title {
+                font-size: 1.5rem;
+            }
+
+            .skill-tree-content {
+                padding: 20px;
+                max-height: calc(90vh - 100px);
+            }
+
+            .skill {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">ASCEND</h1>
+            <p class="subtitle">Progress Through the Void</p>
+        </div>
+
+        <div class="points-display">
+            <div class="points-label">Power Level</div>
+            <div class="points-value" id="pointsDisplay">0</div>
+        </div>
+
+        <div class="click-area">
+            <button class="click-button" id="clickButton">✦</button>
+            <div class="controls">
+                <button class="btn" id="skillTreeBtn">Open Codex</button>
+                <button class="btn" id="resetBtn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="skill-tree-modal" id="skillTreeModal">
+        <div class="book-container">
+            <div class="book">
+                <div class="skill-tree-header">
+                    <h2 class="skill-tree-title">CODEX</h2>
+                    <button class="close-btn" id="closeSkillTree">✕</button>
+                </div>
+                <div class="skill-tree-content" id="skillTreeContent">
+                    <!-- Skills will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="skillTree.js"></script>
+</body>
+</html>
